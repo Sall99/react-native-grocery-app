@@ -1,7 +1,8 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useRef } from "react";
 import Swiper from "react-native-swiper";
-import { slides } from "@/constants";
+import { Colors, slides } from "@/constants";
+import { Typography } from "@/components";
 
 export default function Index() {
   const swiperRef = useRef<Swiper | null>(null);
@@ -18,14 +19,18 @@ export default function Index() {
         ref={swiperRef}
         loop={false}
         showsPagination={true}
-        activeDotColor="green"
+        activeDotColor={Colors.light.primaryDark}
       >
         {slides.map((slide) => (
           <View style={styles.slide} key={slide.key}>
             <Image source={slide.image} style={styles.image} />
             <View style={styles.details}>
-              <Text style={styles.title}>{slide.title}</Text>
-              <Text style={styles.description}>{slide.description}</Text>
+              <Typography variant="titleLarge" align="center">
+                {slide.title}
+              </Typography>
+              <Typography variant="bodyLarge" align="center">
+                {slide.description}
+              </Typography>
             </View>
           </View>
         ))}
@@ -33,10 +38,14 @@ export default function Index() {
 
       <View style={styles.navigation}>
         <TouchableOpacity>
-          <Text style={styles.skip}>Skip</Text>
+          <Typography variant="bodyMedium" style={styles.skip} align="center">
+            Skip
+          </Typography>
         </TouchableOpacity>
         <TouchableOpacity onPress={goToNextSlide}>
-          <Text style={styles.next}>Next</Text>
+          <Typography variant="bodyMedium" align="center" style={styles.next}>
+            Next
+          </Typography>
         </TouchableOpacity>
       </View>
     </View>
@@ -65,16 +74,7 @@ const styles = StyleSheet.create({
   details: {
     paddingHorizontal: 34,
     marginBottom: 47,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  description: {
-    fontSize: 16,
-    marginTop: 10,
-    textAlign: "center",
+    gap: 12,
   },
   skip: {
     fontSize: 16,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   next: {
     fontSize: 16,
-    color: "green",
+    color: Colors.light.primaryDark,
   },
   buttonText: {
     color: "white",
