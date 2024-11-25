@@ -28,7 +28,11 @@ export default function Index() {
               <Typography variant="titleLarge" align="center">
                 {slide.title}
               </Typography>
-              <Typography variant="bodyLarge" align="center">
+              <Typography
+                variant="bodyLarge"
+                color={Colors.light.textSecondary}
+                align="center"
+              >
                 {slide.description}
               </Typography>
             </View>
@@ -38,7 +42,12 @@ export default function Index() {
 
       <View style={styles.navigation}>
         <TouchableOpacity>
-          <Typography variant="bodyMedium" style={styles.skip} align="center">
+          <Typography
+            variant="bodyMedium"
+            color={Colors.light.textSecondary}
+            style={styles.skip}
+            align="center"
+          >
             Skip
           </Typography>
         </TouchableOpacity>
@@ -58,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    backgroundColor: "#ffff",
+    backgroundColor: Colors.light.background,
   },
   slide: {
     flex: 1,
@@ -78,7 +87,6 @@ const styles = StyleSheet.create({
   },
   skip: {
     fontSize: 16,
-    color: "gray",
   },
   navigation: {
     flexDirection: "row",
