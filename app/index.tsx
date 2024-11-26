@@ -1,17 +1,62 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import React, { useRef } from "react";
+import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useRef, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Swiper from "react-native-swiper";
 import { Colors, slides } from "@/constants";
 import { Typography } from "@/components";
+import { useRouter } from "expo-router";
 
 export default function Index() {
   const swiperRef = useRef<Swiper | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkFirstLaunch = async () => {
+      try {
+        const hasLaunchedBefore = await AsyncStorage.getItem(
+          "hasLaunchedBefore"
+        );
+
+        if (hasLaunchedBefore === null) {
+          setIsFirstLaunch(true);
+          await AsyncStorage.setItem("hasLaunchedBefore", "true");
+        } else {
+          setIsFirstLaunch(false);
+        }
+      } catch (error) {
+        console.error("Error checking first launch:", error);
+
+        setIsFirstLaunch(true);
+      }
+    };
+
+    checkFirstLaunch();
+  }, []);
+
+  useEffect(() => {
+    if (isFirstLaunch === false) {
+      router.replace("/signup");
+    }
+  }, [isFirstLaunch, router]);
 
   const goToNextSlide = () => {
-    if (swiperRef.current) {
-      swiperRef.current.scrollBy(1);
+    if (currentIndex === slides.length - 1) {
+      router.push("/signup");
+    } else {
+      swiperRef.current?.scrollBy(1);
+      setCurrentIndex((prevIndex) => prevIndex + 1);
     }
   };
+
+  if (isFirstLaunch === null) {
+    return (
+      <View style={styles.container}>
+        <Typography variant="bodyLarge">Loading...</Typography>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -20,6 +65,7 @@ export default function Index() {
         loop={false}
         showsPagination={true}
         activeDotColor={Colors.light.primaryDark}
+        onIndexChanged={(index) => setCurrentIndex(index)}
       >
         {slides.map((slide) => (
           <View style={styles.slide} key={slide.key}>
@@ -39,9 +85,8 @@ export default function Index() {
           </View>
         ))}
       </Swiper>
-
       <View style={styles.navigation}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/signup")}>
           <Typography
             variant="bodyMedium"
             color={Colors.light.textSecondary}
@@ -85,9 +130,6 @@ const styles = StyleSheet.create({
     marginBottom: 47,
     gap: 12,
   },
-  skip: {
-    fontSize: 16,
-  },
   navigation: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -96,12 +138,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 22,
   },
+  skip: {
+    fontSize: 16,
+  },
   next: {
     fontSize: 16,
     color: Colors.light.primaryDark,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
   },
 });
